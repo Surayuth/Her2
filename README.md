@@ -1,7 +1,7 @@
 # Her2
 1. download the script
 ```
-!wgethttps://raw.githubusercontent.com/Surayuth/Her2/main/read_slide.py
+!wget https://raw.githubusercontent.com/Surayuth/Her2/main/read_slide.py
 ```
 2. install these libraries 
 ```
