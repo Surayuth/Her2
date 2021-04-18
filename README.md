@@ -18,4 +18,5 @@ tissues = extract_tissues(path_to_image, from_level=5, to_level=3, size=224)
 ```
 visual(tissues, rows=2, cols=2, img_size=10)
 ```
+![Screenshot from 2021-04-19 01-05-27](https://user-images.githubusercontent.com/66277085/115155880-0003cc00-a0ac-11eb-80a7-cebe897c67bc.png)
 
