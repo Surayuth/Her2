@@ -166,4 +166,8 @@ def extract_patches(path, from_level, to_level, size, show=False):
     # get patches of the new cropped mask 
     cvt_patches = get_patches(cvt_mask, size, show)
 
-    return cvt_patches
+    # get tissue from masked patches
+    new_img = get_img(obj, to_level, (0, 0), (-1, -1))
+    tissues = get_tissues(new_img, cvt_patches)
+
+    return tissues
