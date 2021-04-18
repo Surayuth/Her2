@@ -11,6 +11,7 @@
 ```
 3. get tissues 
 ```
+from read_slide import *
 tissues = extract_tissues(path_to_image, from_level=5, to_level=3, size=224)
 ```
 4. visualize tissues
