@@ -151,7 +151,7 @@ def visual(patches, rows, cols, img_size):
 # complete pipeline
 def extract_tissues(path, from_level, to_level, size, show=False):
     obj = get_obj(path)
-    level_dims = obj.leve_dimensions
+    level_dims = obj.level_dimensions
     img = get_img(obj, from_level, (0, 0), (-1, -1))
     
     # normal mask (A)
