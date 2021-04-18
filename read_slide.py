@@ -149,7 +149,7 @@ def visual(patches, rows, cols, img_size):
                 idx += 1
 
 # complete pipeline
-def extract_patches(path, from_level, to_level, size, show=False):
+def extract_tissues(path, from_level, to_level, size, show=False):
     obj = get_obj(path)
     level_dims = obj.leve_dimensions
     img = get_img(obj, from_level, (0, 0), (-1, -1))
