@@ -171,3 +171,17 @@ def extract_tissues(path, from_level, to_level, size, show=False):
     tissues = get_tissues(new_img, cvt_patches)
 
     return tissues
+                  
+def download(src, dst, option=None):
+    file = src.split('/')[-1]
+    abspath = os.path.abspath(dst)
+    if not os.path.exists(os.path.join(dst, file)):
+        os.system('cp' + ' ' + src + ' ' + dst)
+
+    else:
+        print(f'{file} is already exist in {abspath}.') 
+
+    if option == 'x':
+        print(f'extracting {file} to {abspath}')
+        os.system ('unzip' + ' -a ' + os.path.join(abspath, file))
+        print(f'{file} is extracted in {abspath}.')
