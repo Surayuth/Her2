@@ -175,9 +175,9 @@ def extract_tissues(path, from_level, to_level, size, show=False):
 def download(src, dst, option=None):
     file = src.split('/')[-1]
     abspath = os.path.abspath(dst)
+                  
     if not os.path.exists(os.path.join(dst, file)):
         os.system('cp' + ' ' + src + ' ' + dst)
-
     else:
         print(f'{file} is already exist in {abspath}.') 
 
