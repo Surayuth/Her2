@@ -254,8 +254,7 @@ def remove_outliers(patches, ratio, channels, thresh=0.25):
     return {'level':level, 'size':size, 'images':no_outliers}
 
 # 7: visualize 
-def visual(patches, rows, cols, img_size):
-    images = patches['images']
+def visual(images, rows, cols, img_size):
     if rows * cols < len(images):
         fig, axs = plt.subplots(rows, cols, figsize=(img_size, img_size))
         idx = 0
