@@ -3,12 +3,11 @@ import cv2
 import copy
 import random
 import numpy as np
+from PIL import Image
 import openslide as op
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
-
-# 0: download WSI
 def download(src, dst, option=None):
     file = src.split('/')[-1]
     abspath = os.path.abspath(dst)
@@ -16,13 +15,13 @@ def download(src, dst, option=None):
     if not os.path.exists(os.path.join(dst, file)):
         os.system('cp' + ' ' + src + ' ' + dst)
     else:
-        print(f'{file} is already exist in {abspath}...') 
+        print(f'{file} is already exist in {abspath}.') 
 
     if option == 'x':
-        print(f'extracting {file} to {abspath}...')
+        print(f'extracting {file} to {abspath}')
         os.system ('unzip' + ' -a ' + os.path.join(abspath, file))
-        print(f'{file} is extracted in {abspath}...')
-        
+        print(f'{file} is extracted in {abspath}.')
+
 # 1: read image
 def get_obj(path):
     return op.OpenSlide(path)
@@ -136,7 +135,7 @@ def get_rois(mask, size, thresh=0.3, show=False):
 
     return {'level':mask['level'], 'size': size, 'coordinates':coordinates}
    
-# 4.2: get coordinates of high res patches in each patch from 4.1
+# 4.2: get coordinates of high mag patches in each patch from 4.1
 def convert_coordinates(coordinates, from_level, to_level):
     new_coordinates = []
     diff = from_level - to_level
@@ -146,19 +145,19 @@ def convert_coordinates(coordinates, from_level, to_level):
         new_coordinates.append((new_y, new_x))
     return new_coordinates
 
-def get_highres_rois(rois, to_level, magnify):
+def get_highmag_rois(rois, to_level, magnify):
     '''
     ############################################################################
-    # Extract high res rois from each low roi specified by each coordinate.
+    # Extract high mag rois from each low roi specified by each coordinate.
     ############################################################################
-    # the number of new high res rois per each low res roi are varied, 
+    # the number of new high mag rois per each low mag roi are varied, 
     # say #num * magnify = 2**diff
-    # where #num = number of high res rois per each low res roi along x and y dirs.
+    # where #num = number of high mag rois per each low mag roi along x and y dirs.
     #   magnify = magnification (2^n where n = 0,1,2,..,diff)
     #   diff = from_level - to_level
     # For example, if diff = 4 and magnify = 2, then
     #   #num = 2**4 / 2 = 16
-    # Thus, the number of high res rois in each low res roi = 16**2 
+    # Thus, the number of high mag rois in each low mag roi = 16**2 
     ############################################################################
     '''
     from_level = rois['level']
@@ -170,21 +169,21 @@ def get_highres_rois(rois, to_level, magnify):
     if magnify > 2**diff:
         raise Exception(f'magnification must be lower than {2**diff}!')
 
-    # convert low res rois to high res rois
+    # convert low mag rois to high mag rois
     coordinates = rois['coordinates']
     new_coordinates = convert_coordinates(coordinates, from_level, to_level)
 
     new_size = rois['size'] * magnify
     num = int(2**diff / magnify)
-    smaller_coordinates = []
+    mag_coordinates = []
     for coordinate in new_coordinates:
         cornor_y, cornor_x = coordinate
         for y in range(1,num):
             for x in range(1,num):
-                smaller_coordinates.append((cornor_y + new_size*y, 
+                mag_coordinates.append((cornor_y + new_size*y, 
                                             cornor_x + new_size*x))
  
-    new_coordinates += smaller_coordinates
+    new_coordinates += mag_coordinates
 
     return {'level':to_level, 'size': new_size, 'coordinates':new_coordinates}
 
@@ -232,7 +231,7 @@ def rand_imgs(images, ratio):
     return rand_imgs, {'image':combined_img, 'level':'undefined'}
 
 
-def remove_outliers(patches, ratio, channels, thresh=0.25):
+def filter_patches(patches, ratio, channels, thresh=0.25):
     images = patches['images']
     size = patches['size']
     level = patches['level']
@@ -243,15 +242,18 @@ def remove_outliers(patches, ratio, channels, thresh=0.25):
     ret,_ = get_mask(combined_img, channels)
 
     # remove outlier patches
-    no_outliers = []
+    selected = []
+    removed = []
     for image in images:
         _, thresh_img = get_mask({'image':image, 'level':'undefined'}, channels)
 
         # check if we use disregrad this image
         if np.sum(thresh_img['image'] > 0) / size**2 > thresh:
-            no_outliers.append(image)
+            selected.append(image)
+        else:
+            removed.append(image)
     
-    return {'level':level, 'size':size, 'images':no_outliers}
+    return {'level':level, 'size':size, 'selected':selected, 'removed':removed}
 
 # 7: visualize 
 def visual(images, rows, cols, img_size):
@@ -262,3 +264,19 @@ def visual(images, rows, cols, img_size):
             for col in range(cols):
                 axs[row][col].imshow(images[idx], cmap='gray')
                 idx += 1
+
+# 8: save image
+def save(images, dst):
+    # write data description
+    # TODO
+
+    # check if dir exist
+    if not os.path.exists(dst):
+        os.mkdir(dst)
+
+    index = 1
+    for image in images:
+        name = str('0' + str(index) if index < 10 else str(index)) + '.png'
+        path = os.path.join(dst, name)
+        Image.fromarray(image).save(path)
+        index += 1
