@@ -16,6 +16,7 @@ without requiring too much ram.
 3. Read .ndpi image from `path`. We need to use `get_obj` to read .ndpi to OpenSlide object. Then, we use `get_img` to extract 
 to extact PIL images from the specified `level`. 
 ```
+obj = get_obj(path)
 img = get_img(obj, level=5)
 ```
 
