@@ -37,7 +37,11 @@ plot(new_mask)
 ```
 rois = get_rois(new_mask, size=64, show=True)
 ```
-6. Get high resolution ROIs from the coordinates for ROIs in step 5. 
+6. Get high magnified ROIs from the coordinates for ROIs in step 5. In this step, we will draw a square grid inside each ROI extracted from step 5. The coordinates of the grids inside each ROI will be converted to be coordinates in high magnification images. The level of magnification increased is set by `to_level` , the lower, the better. `magnify` is the ratio between the length of each square grid after being magnified and the original length of each square grid. Note that the height and width of the images increase doubly for each `level` lowered. Thus, if `size=64`, `to_level=1` and `magnify = 8`, we get a relation `num * magnify` = `2 ** diff` where `num` is the number of grids along x and y directions in each ROI in step 5 and `diff = level - to_level`.
 ```
-hr_rois = get_highres_rois(rois, to_level=1, magnify=8)
+hm_rois = get_highmag_rois(rois, to_level=1, magnify=8)
+```
+7. Get patches (ndarray) from coordinates in ROIs. You can also extract patches `rois` too but the patches you get will have low magnification.
+```
+patches = get_patches(obj, hm_rois)
 ```
