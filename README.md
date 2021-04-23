@@ -45,3 +45,7 @@ hm_rois = get_highmag_rois(rois, to_level=1, magnify=8)
 ```
 patches = get_patches(obj, hm_rois)
 ```
+8. Separate the patches into 2 groups: the selected group have the tissue region more than  the threshold value `thresh`. `ratio` is related to the number of patches which will be sample to calculate an optimum binary threshold. See step 4 for the definition of `channels`.
+```
+filtered= filter_patches(patches, ratio=0.3, channels=[1], thresh=0.2)
+```
