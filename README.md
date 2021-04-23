@@ -5,7 +5,7 @@ without requiring too much ram.
 
 1. download the script
 ```
-!wget https://raw.githubusercontent.com/Surayuth/Her2/main/read_slide.py
+!wget https://raw.githubusercontent.com/Surayuth/Her2/crop/read_slide.py
 ```
 2. install these libraries 
 ```
