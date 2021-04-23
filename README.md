@@ -1,4 +1,8 @@
 # Her2
+
+The algorithm for extracting rois in this branch can extract high resolution rois (high magnification) from Warwick dataset
+without requiring too much ram.
+
 1. download the script
 ```
 !wget https://raw.githubusercontent.com/Surayuth/Her2/main/read_slide.py
