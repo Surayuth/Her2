@@ -16,12 +16,12 @@ def download(src, dst, option=None):
     if not os.path.exists(os.path.join(dst, file)):
         os.system('cp' + ' ' + src + ' ' + dst)
     else:
-        print(f'{file} is already exist in {abspath}.') 
+        print(f'{file} is already exist in {abspath}...') 
 
     if option == 'x':
-        print(f'extracting {file} to {abspath}')
+        print(f'extracting {file} to {abspath}...')
         os.system ('unzip' + ' -a ' + os.path.join(abspath, file))
-        print(f'{file} is extracted in {abspath}.')
+        print(f'{file} is extracted in {abspath}...')
         
 # 1: read image
 def get_obj(path):
