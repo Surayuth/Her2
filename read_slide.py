@@ -15,13 +15,15 @@ def download(src, dst, option=None):
     if not os.path.exists(os.path.join(dst, file)):
         os.system('cp' + ' ' + src + ' ' + dst)
     else:
-        print(f'{file} is already exist in {abspath}.') 
+        print(f'{file} is already exist in {abspath}...') 
 
     if option == 'x':
-        print(f'extracting {file} to {abspath}')
-        os.system ('unzip' + ' -a ' + os.path.join(abspath, file))
-        print(f'{file} is extracted in {abspath}.')
-
+        if not os.path.exists(os.path.join(dst, file.split('.')[0])):
+            print(f'extracting {file} to {abspath}')
+            os.system ('unzip' + ' -a ' + os.path.join(abspath, file))
+            print(f'{file} is extracted in {abspath}...')
+        else:
+            print(f'{file} is extracted already...')
 # 1: read image
 def get_obj(path):
     return op.OpenSlide(path)
@@ -51,7 +53,7 @@ def get_mask(img, channels, ret=None):
         ret, thresh_img = cv2.threshold(hs_img, 0, 255, cv2.THRESH_OTSU)
     else:
         _, thresh_img = cv2.threshold(hs_img, ret, 255, cv2.THRESH_OTSU)
-    return ret, {'level':img['level'], 'image':thresh_img}
+    return {'level':img['level'], 'image':thresh_img, 'ret':ret}
 
 # 3.2: (optional) crop mask
 def crop_mask(mask, miny, minx):
@@ -239,13 +241,13 @@ def filter_patches(patches, ratio, channels, thresh=0.25):
     _, combined_img = rand_imgs(images, ratio)
 
     # get threshold value
-    ret,_ = get_mask(combined_img, channels)
+    ret = get_mask(combined_img, channels)['ret']
 
     # remove outlier patches
     selected = []
     removed = []
     for image in images:
-        _, thresh_img = get_mask({'image':image, 'level':'undefined'}, channels)
+        thresh_img = get_mask({'image':image, 'level':'undefined'}, channels)
 
         # check if we use disregrad this image
         if np.sum(thresh_img['image'] > 0) / size**2 > thresh:
@@ -256,7 +258,7 @@ def filter_patches(patches, ratio, channels, thresh=0.25):
     return {'level':level, 'size':size, 'selected':selected, 'removed':removed}
 
 # 7: visualize 
-def visual(images, rows, cols, img_size):
+def visual(images, rows, cols, img_size=10):
     if rows * cols < len(images):
         fig, axs = plt.subplots(rows, cols, figsize=(img_size, img_size))
         idx = 0
