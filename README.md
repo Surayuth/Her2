@@ -49,3 +49,7 @@ patches = get_patches(obj, hm_rois)
 ```
 filtered= filter_patches(patches, ratio=0.3, channels=[1], thresh=0.2)
 ```
+9. Visualize the filtered patches. We should to visualize the `selected` patches which are the patches that have tissue regions more than the `thresh` value in step 8.
+```
+visual(filtered['selected'], rows=2, cols=2)
+```
